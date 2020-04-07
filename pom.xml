@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+        http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>omero</groupId>
+  <artifactId>raw-data-microservice</artifactId>
+  <version>0.0.1</version>
+
+  <name>raw-data-microservice</name>
+  <description>Microservice for providing raw pixel data</description>
+
+  <organization>
+    <name>Open Microscopy Environment</name>
+    <url>http://openmicroscopy.org/</url>
+  </organization>
+
+  <developers>
+    <developer>
+      <id>openmicroscopy.org</id>
+      <name>The OME Team</name>
+      <email>ome-devel@lists.openmicroscopy.org.uk</email>
+      <url>http://openmicroscopy.org/</url>
+      <organization>Open Microscopy Environment</organization>
+      <organizationUrl>http://openmicroscopy.org/</organizationUrl>
+    </developer>
+  </developers>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+	<groupId>omero</groupId>
+	<artifactId>server</artifactId>
+	<version>5.4.6-ice36-b87</version>
+        <exclusions>
+          <exclusion>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+	<artifactId>guava</artifactId>
+	<version>25.0-jre</version>
+      </dependency>
+      <dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-api</artifactId>
+	<version>1.7.25</version>
+      </dependency>
+      <dependency>
+	<groupId>io.vertx</groupId>
+	<artifactId>vertx-core</artifactId>
+	<version>3.5.1</version>
+      </dependency>
+      <dependency>
+	<groupId>io.vertx</groupId>
+	<artifactId>vertx-web</artifactId>
+	<version>3.5.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.janelia.saalfeldlab</groupId>
+        <artifactId>n5</artifactId>
+        <version>2.1.6</version>
+      </dependency>
+      <dependency>
+        <groupId>ome</groupId>
+        <artifactId>formats-bsd</artifactId>
+        <version>6.2.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20190722</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>omero</groupId>
+      <artifactId>server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ome</groupId>
+      <artifactId>formats-bsd</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.janelia.saalfeldlab</groupId>
+      <artifactId>n5</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web</artifactId>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+      <repository>
+        <id>ome.maven</id>
+        <name>OME Maven Artifactory</name>
+        <url>http://artifacts.openmicroscopy.org/artifactory/maven</url>
+      </repository>
+      <repository>
+        <id>unidata</id>
+        <name>Unidata Repository</name>
+        <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
+      </repository>
+    <repository>
+      <id>saalfeldlab</id>
+      <name>Usaalfeldlab</name>
+      <url>https://saalfeldlab.github.io/maven</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.openmicroscopy.RawDataService</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+      <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.openmicroscopy.RawDataService</mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.0.1</version>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
